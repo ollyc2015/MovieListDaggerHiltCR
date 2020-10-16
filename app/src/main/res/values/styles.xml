@@ -1,0 +1,38 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="MovieText" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/textBlack</item>
+    </style>
+
+    <style name="MovieText.Bold" parent="MovieText">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="MovieText.Title" parent="MovieText.Bold">
+        <item name="android:textSize">@dimen/listTitleTextSize</item>
+    </style>
+
+    <style name="MovieText.Name" parent="MovieText.Bold">
+        <item name="android:textSize">@dimen/missionNameTextSize</item>
+    </style>
+
+    <style name="MovieText.Attribute" parent="MovieText">
+        <item name="android:textSize">@dimen/missionAttributeTextSize</item>
+    </style>
+
+    <style name="MovieText.Error" parent="MovieText">
+        <item name="android:textColor">@color/errorRed</item>
+    </style>
+
+    <style name="MovieText.Link" parent="MovieText">
+        <item name="android:textColor">@color/linkBlue</item>
+    </style>
+
+</resources>

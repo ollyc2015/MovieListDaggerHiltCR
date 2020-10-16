@@ -1,0 +1,59 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    ext {
+        kotlin_version = "1.4.10"
+
+        localPropsFileName = "local.properties"
+
+        readProperties = { fileName ->
+            final File propsFile = file(fileName)
+            final Properties props = new Properties()
+            if (propsFile.exists()) {
+                props.load(propsFile.newDataInputStream())
+            } else {
+                def localPropNames = ["api_key",
+                                      "base_url",
+                                      "poster_path"] as String[]
+                def propNames = [ (localPropsFileName): localPropNames]
+
+                propNames[fileName].each {
+                    def buildProp = System.getenv(it.toUpperCase())
+                    if (buildProp == null) {
+                        throw new IllegalStateException("Mising properties file '${fileName}' and missing environment variable '${it.toUpperCase()}'. One of the two must be present.")
+                    }
+
+                    props.setProperty(it, buildProp)
+                }
+            }
+
+            return props
+        }
+    }
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:4.0.1"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.google.dagger:hilt-android-gradle-plugin:2.28-alpha'
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
+
+ext {
+    posterBaseUrl = "\"http://image.tmdb.org/t/p/w185\""
+    apiBaseUrl = "\"https://api.themoviedb.org\""
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

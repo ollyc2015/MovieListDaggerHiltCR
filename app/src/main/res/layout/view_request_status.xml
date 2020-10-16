@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ProgressBar
+        android:id="@+id/statusProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
+
+    <TextView
+        android:id="@+id/statusError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        style="@style/MovieText.Error"/>
+
+    <TextView
+        android:id="@+id/statusRetry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_marginEnd="@dimen/retryMarginEnd"
+        android:layout_marginBottom="@dimen/retryMarginBottom"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true"
+        style="@style/MovieText.Link"/>
+
+</merge>

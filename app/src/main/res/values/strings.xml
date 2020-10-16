@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">TheMovieDataBase</string>
+
+    <string name="list_title">The Movie Database</string>
+    <string name="movie_poster_description">Movie Poster</string>
+
+    <string name="release_date">Release date: %s</string>
+    <string name="voting_average">Voting average: %s</string>
+
+    <string name="forbidden_error">Access error: has your token expired?</string>
+    <string name="network_error">Network error: please check your network connection.</string>
+    <string name="timeout_error">Timeout error: the server is taking to long to respond.</string>
+    <string name="server_error">Server error: internal server error.</string>
+    <string name="unknown_error">Unknown error.</string>
+
+    <string name="retry_link">&lt;u&gt;Retry&lt;/u&gt;</string>
+</resources>

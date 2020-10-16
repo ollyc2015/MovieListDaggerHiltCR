@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/itemPaddingTop"
+    android:paddingBottom="@dimen/itemPaddingBottom"
+    android:orientation="horizontal"
+    android:background="@drawable/border_bottom_black"
+    android:baselineAligned="false"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Mission patch image container -->
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="@integer/item_image_percentage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageView
+            android:id="@+id/moviePoster"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            android:contentDescription="@string/movie_poster_description"/>
+
+        <ProgressBar
+            android:id="@+id/moviePosterProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+
+    </FrameLayout>
+
+    <!-- Launch information container -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="@integer/item_details_percentage">
+
+        <TextView
+            android:id="@+id/movieTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/missionNameMarginStart"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            style="@style/MovieText.Name"
+            tools:text="The Godfather"/>
+
+        <TextView
+            android:id="@+id/votingAverage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/itemMarginVertical"
+            app:layout_constraintStart_toStartOf="@id/movieTitle"
+            app:layout_constraintTop_toBottomOf="@id/movieTitle"
+            style="@style/MovieText.Attribute"
+            tools:text="@string/voting_average"/>
+
+        <TextView
+            android:id="@+id/releaseDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/itemMarginVertical"
+            app:layout_constraintStart_toStartOf="@id/movieTitle"
+            app:layout_constraintTop_toBottomOf="@id/votingAverage"
+            style="@style/MovieText.Attribute"
+            tools:text="@string/release_date"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>
