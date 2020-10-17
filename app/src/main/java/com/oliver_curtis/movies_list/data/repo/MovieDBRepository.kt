@@ -9,24 +9,32 @@ import com.oliver_curtis.movies_list.domain.repo.MovieRepository
 
 class MovieDBRepository(private val movieDatabase: MovieDatabase) : MovieRepository {
 
+    private val movieList: MutableList<Movie>? = arrayListOf()
+
     override suspend fun getMovies(page: Int): List<Movie>? {
-        return movieDatabase.getMovies(page).results.map { toMovie(it) }
+        return toMovie(movieDatabase.getMovies(page).results)
     }
 
-    private fun toMovie(entity: MovieDetailsApiEntity): Movie {
+    private fun toMovie(entity: List<MovieDetailsApiEntity>): List<Movie>? {
 
-        val id = entity.id
+        entity.forEach {
 
-        val posterPath = entity.poster_path
+            val id = it.id
 
-        val title = entity.title
+            val posterPath = it.poster_path
 
-        val votingAverage = entity.vote_average
+            val title = it.title
 
-        val releaseDate = entity.release_date
-        val date = formatDate(releaseDate)
+            val votingAverage = it.vote_average
 
-        return Movie(id, posterPath, title, votingAverage, date)
+            val releaseDate = it.release_date
+            val date = formatDate(releaseDate)
+
+            movieList?.add(Movie(id, posterPath, title, votingAverage, date))
+
+        }
+
+        return movieList?.toList()
 
     }
 }

@@ -32,42 +32,41 @@ class Modules {
 
     @Singleton
     @Provides
-    fun providesRetrofitInstance(): Retrofit {
-        return retrofitInstance(BuildConfig.BASE_URL, providesGSONBuilder())
+    fun providesRetrofitInstance(gson: Gson): Retrofit {
+        return retrofitInstance(BuildConfig.BASE_URL, gson)
     }
 
-    @Provides
     @Singleton
+    @Provides
     fun provideApiService(retrofit: Retrofit): MovieService {
         return retrofit.create(MovieService::class.java)
     }
 
-    @Provides
     @Singleton
-    fun provideMovieDatabase(): MovieDatabase {
-        return MovieDatabase(provideApiService(providesRetrofitInstance()))
+    @Provides
+    fun provideMovieDatabase(movieService: MovieService): MovieDatabase {
+        return MovieDatabase(movieService)
+    }
+
+    @Singleton
+    @Provides
+    fun provideMovieRepository(movieDatabase: MovieDatabase): MovieRepository {
+        return MovieDBRepository(movieDatabase)
     }
 
     @Provides
-    @Singleton
-    fun provideMovieRepository(): MovieRepository {
-        return MovieDBRepository(provideMovieDatabase())
+    fun provideMovieUseCase(movieRepository: MovieRepository): MovieUseCase {
+        return MovieUseCaseImpl(movieRepository)
     }
 
-    @Provides
     @Singleton
-    fun provideMovieUseCase(): MovieUseCase {
-        return MovieUseCaseImpl(provideMovieRepository())
+    @Provides
+    fun providesViewModel(movieUseCase: MovieUseCase): MovieViewModel {
+        return MovieViewModel(movieUseCase)
     }
 
-    @Provides
     @Singleton
-    fun providesViewModel(): MovieViewModel {
-        return MovieViewModel(provideMovieUseCase())
-    }
-
     @Provides
-    @Singleton
     fun providesMovieProcessor(): MovieListProcessor {
         return MovieListProcessorImpl()
     }

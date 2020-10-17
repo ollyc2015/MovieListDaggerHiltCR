@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -21,11 +20,13 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragement_movie_list.*
 import javax.inject.Inject
 
+
 @AndroidEntryPoint
-class MovieListFragment : Fragment(),MovieView, MovieListView {
+class MovieListFragment : Fragment(), MovieView, MovieListView {
 
     @Inject
     lateinit var viewModel: MovieViewModel
+
     @Inject
     lateinit var processor: MovieListProcessor
 
@@ -56,7 +57,8 @@ class MovieListFragment : Fragment(),MovieView, MovieListView {
         with(movieList) {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = MovieListAdapter(arrayListOf())
-            adapter?.stateRestorationPolicy=RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+            adapter?.stateRestorationPolicy =
+                RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         }
     }
 
@@ -94,7 +96,7 @@ class MovieListFragment : Fragment(),MovieView, MovieListView {
         movieRequestStatus.showError(error)
     }
 
-    private fun getMoviesFromDatabase(page:Int): MutableLiveData<CallResult<List<Movie>?>> {
+    private fun getMoviesFromDatabase(page: Int): MutableLiveData<CallResult<List<Movie>?>> {
 
         return viewModel.getMovies(page)
     }
@@ -105,7 +107,10 @@ class MovieListFragment : Fragment(),MovieView, MovieListView {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (!recyclerView.canScrollVertically(1)) {
-                    getMoviesFromDatabase(PAGE_NUMBER).observe(viewLifecycleOwner, getMoviesObserver)
+                    getMoviesFromDatabase(PAGE_NUMBER).observe(
+                        viewLifecycleOwner,
+                        getMoviesObserver
+                    )
                     PAGE_NUMBER++
                 }
             }
@@ -120,7 +125,7 @@ class MovieListFragment : Fragment(),MovieView, MovieListView {
         }
     }
 
-    companion object{
+    companion object {
 
         var PAGE_NUMBER = 1
 

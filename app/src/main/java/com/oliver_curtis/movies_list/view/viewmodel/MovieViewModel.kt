@@ -15,25 +15,28 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-@ActivityRetainedScoped
-class MovieViewModel(
-    private val movieUseCase: MovieUseCase,
-    private val liveDataProvider: LiveDataProvider = DefaultLiveDataProvider(),
-    private val dispatcherProvider: DispatcherProvider = DefaultDispatcherProvider()
-) : ViewModel(){
+
+class MovieViewModel
+
+constructor( private val movieUseCase: MovieUseCase,
+             private val liveDataProvider: LiveDataProvider = DefaultLiveDataProvider(),
+             private val dispatcherProvider: DispatcherProvider = DefaultDispatcherProvider()):ViewModel() {
 
     private var requestInProgress: Job? = null
 
-    fun getMovies(page:Int): MutableLiveData<CallResult<List<Movie>?>> {
+    fun getMovies(page: Int): MutableLiveData<CallResult<List<Movie>?>> {
 
         return liveDataProvider.liveDataInstance<List<Movie>?>().apply {
 
-        issueRequest({ movieUseCase.fetchMovies(page)}, {  this.postValue(it) })
+            issueRequest({ movieUseCase.fetchMovies(page) }, { this.postValue(it) })
 
         }
     }
 
-    private fun <T> issueRequest(request: suspend () -> T, resultReceiver: (CallResult<T>) -> Unit) {
+    private fun <T> issueRequest(
+        request: suspend () -> T,
+        resultReceiver: (CallResult<T>) -> Unit
+    ) {
         val job = Job()
         val coroutineScope = CoroutineScope(dispatcherProvider.main() + job)
 
