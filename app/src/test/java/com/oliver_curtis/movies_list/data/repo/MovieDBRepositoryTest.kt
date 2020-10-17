@@ -4,7 +4,7 @@ import com.oliver_curtis.movies_list.data.db.MovieDatabase
 import com.oliver_curtis.movies_list.data.entity.MovieApiEntity
 import com.oliver_curtis.movies_list.data.entity.MovieDetailsApiEntity
 import com.oliver_curtis.movies_list.domain.model.Movie
-import io.reactivex.Single
+import com.oliver_curtis.movies_list.helper.KMockito
 import io.reactivex.observers.TestObserver
 import junit.framework.Assert.assertEquals
 import org.junit.Before
@@ -60,6 +60,8 @@ class MovieDBRepositoryTest {
         1000
     )
 
+    private val movie = Movie(1, "/ugZW8ocsrfgI95pnQ7wrmKDxIe.jpg", "Hard Kill", 4.7, "2020-08-25")
+
 
     private lateinit var movieDBRepository: MovieDBRepository
 
@@ -72,26 +74,18 @@ class MovieDBRepositoryTest {
     @Test
     fun given_onePageOfPopularMovies_whenGettingMovies_thenReturnMovies() {
 
+        val expected = listOf(movie)
+
         // WHEN we get movies from the database, we expect to receive the value stated
-        Mockito.`when`(movieDatabase.getMovies(1)).thenReturn(Single.just(movieEntity))
+        Mockito.`when`(movieDatabase.getMovies(1)).thenReturn(movieEntity)
 
         // GIVEN movies actually requested from the DB
-        movieDBRepository.getMovies(1).subscribe(movieTestObserver)
+        KMockito.suspendedWhen {movieDBRepository.getMovies(1)}.thenReturn(expected)
 
         // THEN assert that our returned object has a id value at position 0 as per our expected object
         val result = movieTestObserver.values()[0]
 
         assertEquals(movieEntity.results[0].title, result[0].title)
 
-    }
-
-    @Test
-    fun givenGetMovieRequestError_whenGettingMovies_thenReturnEmptyList() {
-        // WHEN get movies error
-        Mockito.`when`(movieDatabase.getMovies(1)).thenReturn(Single.error(Throwable("error")))
-        // GIVEN movies requested
-        movieDBRepository.getMovies(1).subscribe(movieTestObserver)
-        // THEN return emptyList
-        movieTestObserver.assertValue(emptyList())
     }
 }
