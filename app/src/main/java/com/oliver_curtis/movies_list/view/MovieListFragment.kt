@@ -1,7 +1,6 @@
 package com.oliver_curtis.movies_list.view
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -91,14 +90,8 @@ class MovieListFragment : Fragment(),MovieView, MovieListView {
         (movieList.adapter as MovieListAdapter).updateAll(movies)
     }
 
-    override fun displayError(error: Throwable) {
-        toast(error.toString())
-        Log.d("olly", "error: $error")
-    }
-
-    private fun toast(string: String) {
-
-        Toast.makeText(requireContext(), string, Toast.LENGTH_LONG).show()
+    override fun displayError(error: Int) {
+        movieRequestStatus.showError(error)
     }
 
     private fun getMoviesFromDatabase(page:Int): MutableLiveData<CallResult<List<Movie>?>> {

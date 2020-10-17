@@ -1,13 +1,15 @@
 package com.oliver_curtis.movies_list.view.processor.impl
 
 import com.oliver_curtis.movies_list.common.viewmodel.CallResult
+import com.oliver_curtis.movies_list.common.viewmodel.error.DefaultErrorResolver
+import com.oliver_curtis.movies_list.common.viewmodel.error.ErrorResolver
 import com.oliver_curtis.movies_list.domain.model.Movie
 import com.oliver_curtis.movies_list.view.MovieView
 import com.oliver_curtis.movies_list.view.processor.MovieListProcessor
 import dagger.hilt.android.scopes.ActivityScoped
 
 @ActivityScoped
-class MovieListProcessorImpl : MovieListProcessor {
+class MovieListProcessorImpl( private val errorResolver: ErrorResolver = DefaultErrorResolver()) : MovieListProcessor {
 
     private var view: MovieView? = null
 
@@ -15,7 +17,7 @@ class MovieListProcessorImpl : MovieListProcessor {
         if (callResult.hasResult()) {
             callResult.result()?.let { view?.displayMovies(it) }
         } else if(callResult.hasError()) {
-            view?.displayError(callResult.error())
+            view?.displayError(errorResolver.findErrorMessageResId(callResult.error()))
         }
     }
 
