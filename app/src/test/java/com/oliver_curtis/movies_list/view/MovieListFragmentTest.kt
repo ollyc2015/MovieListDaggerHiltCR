@@ -1,4 +1,4 @@
-package com.oliver_curtis.movies_list.view.viewmodel
+package com.oliver_curtis.movies_list.view
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
@@ -6,13 +6,11 @@ import androidx.lifecycle.Observer
 import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.verify
 import com.oliver_curtis.movies_list.common.viewmodel.CallResult
-import com.oliver_curtis.movies_list.common.viewmodel.cr.DefaultDispatcherProvider
 import com.oliver_curtis.movies_list.common.viewmodel.livedata.DefaultLiveDataProvider
 import com.oliver_curtis.movies_list.domain.interactor.MovieUseCase
 import com.oliver_curtis.movies_list.domain.model.Movie
 import com.oliver_curtis.movies_list.helper.KMockito
-import com.oliver_curtis.movies_list.helper.providers.TestDispatcherProvider
-import kotlinx.coroutines.CoroutineDispatcher
+import com.oliver_curtis.movies_list.view.viewmodel.MovieViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
@@ -26,25 +24,20 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 
-class MovieViewModelTest {
+class MovieListFragmentTest {
 
     @get:Rule
     val rule = InstantTaskExecutorRule()
 
-    // mocked repository since that isn't the class under test, we can
-    @Mock lateinit var defaultLiveDataProvider: DefaultLiveDataProvider
+    @Mock lateinit var viewModel: MovieViewModel
+    @Mock lateinit var movieObserver: Observer<CallResult<List<Movie>?>>
+
+    //Class under test
+    private lateinit var movieListFragment: MovieListFragment
+    private val movie = Movie(1, "/ugZW8ocsrfgI95pnQ7wrmKDxIe.jpg", "Hard Kill", 4.7, "2020-08-25")
+
     @ExperimentalCoroutinesApi
     private val dispatcher = TestCoroutineDispatcher()
-
-    @Mock lateinit var useCase: MovieUseCase
-
-    @Mock lateinit var movieObserver: Observer<CallResult<List<Movie>?>>
-    private val movieLiveData = MutableLiveData<CallResult<List<Movie>>>()
-
-    // the actual class under test
-    private lateinit var viewModel: MovieViewModel
-
-    private val movie = Movie(1, "/ugZW8ocsrfgI95pnQ7wrmKDxIe.jpg", "Hard Kill", 4.7, "2020-08-25")
 
     // runs once before each test method is run
     @ExperimentalCoroutinesApi
@@ -52,23 +45,38 @@ class MovieViewModelTest {
     fun setup() {
         MockitoAnnotations.initMocks(this)
         Dispatchers.setMain(dispatcher)
-
-        viewModel = MovieViewModel(useCase, defaultLiveDataProvider)
+        movieListFragment = MovieListFragment()
     }
 
     @Test
-    fun `givenSingleMovieEntity_whenObservingGetMovies_thenChangesObserved`() {
+    fun `givenResults_WhenSuccessfulRequestMade_PassResultsToView`() {
         val expected = listOf(movie)
 
-        Mockito.`when`(defaultLiveDataProvider.liveDataInstance<List<Movie>>()).thenReturn(movieLiveData)
-        KMockito.suspendedWhen {useCase.fetchMovies(1)}.thenReturn(expected)
+        // WHEN we get movies from the database, we expect to receive the value stated
+        Mockito.`when`(viewModel.getMovies(1)).thenReturn(MutableLiveData(CallResult(expected)))
 
-        // call our methods under test and apply our observer whilst we are doing it.
+        // GIVEN movies actually requested from the DB
         runBlocking {viewModel.getMovies(1).observeForever(movieObserver)}
 
         // run assertion against observer
         argumentCaptor<CallResult<List<Movie>?>>().apply {
             verify(movieObserver).onChanged(capture())
         }.run { Assert.assertEquals(expected, firstValue.result()) }
+    }
+
+    @Test
+    fun `givenResults_WhenFailureOccurred_PassFailureInfoToView`() {
+        val expected = Throwable()
+
+        // WHEN we get movies from the database, we expect to receive the value stated
+        Mockito.`when`(viewModel.getMovies(1)).thenReturn(MutableLiveData(CallResult(expected)))
+
+        // GIVEN movies actually requested from the DB
+        runBlocking {viewModel.getMovies(1).observeForever(movieObserver)}
+
+        // run assertion against observer
+        argumentCaptor<CallResult<List<Movie>?>>().apply {
+            verify(movieObserver).onChanged(capture())
+        }.run { Assert.assertEquals(expected, firstValue.error()) }
     }
 }

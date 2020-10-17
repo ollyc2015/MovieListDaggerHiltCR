@@ -1,12 +1,13 @@
 package com.oliver_curtis.movies_list.data.repo
 
+import com.oliver_curtis.movies_list.common.date.formatDate
 import com.oliver_curtis.movies_list.data.db.MovieDatabase
 import com.oliver_curtis.movies_list.data.entity.MovieApiEntity
 import com.oliver_curtis.movies_list.data.entity.MovieDetailsApiEntity
 import com.oliver_curtis.movies_list.domain.model.Movie
 import com.oliver_curtis.movies_list.helper.KMockito
-import io.reactivex.observers.TestObserver
-import junit.framework.Assert.assertEquals
+import com.oliver_curtis.movies_list.helper.assertSame
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
@@ -16,52 +17,8 @@ import org.mockito.MockitoAnnotations
 
 class MovieDBRepositoryTest {
 
-
     @Mock
     lateinit var movieDatabase: MovieDatabase
-
-    private val movieTestObserver = TestObserver<List<Movie>>()
-
-    private val movieEntity = MovieApiEntity(
-        1,
-        arrayListOf(
-            MovieDetailsApiEntity(
-                false,
-                "/aO5ILS7qnqtFIprbJ40zla0jhpu.jpg",
-                arrayListOf(1, 2, 3),
-                741067,
-                "en",
-                "Welcome to Sudden Death",
-                "some overview",
-                1892.824,
-                "/elZ6JCzSEvFOq4gNjNeZsnRFsvj.jpg",
-                "2020-09-29",
-                "Welcome to Sudden Death",
-                false,
-                6.7, 99
-            ),
-            MovieDetailsApiEntity(
-                false,
-                "/aO5ILS7qnqtFIprbJ40zla0jhpu.jpg",
-                arrayListOf(1, 2, 3),
-                741067,
-                "en",
-                "2067",
-                "some overview",
-                1892.824,
-                "/elZ6JCzSEvFOq4gNjNeZsnRFsvj.jpg",
-                "2020-09-29",
-                "Enola Holmes",
-                false,
-                6.7, 99
-            )
-        ),
-        500,
-        1000
-    )
-
-    private val movie = Movie(1, "/ugZW8ocsrfgI95pnQ7wrmKDxIe.jpg", "Hard Kill", 4.7, "2020-08-25")
-
 
     private lateinit var movieDBRepository: MovieDBRepository
 
@@ -74,18 +31,36 @@ class MovieDBRepositoryTest {
     @Test
     fun given_onePageOfPopularMovies_whenGettingMovies_thenReturnMovies() {
 
-        val expected = listOf(movie)
+        val expected  = Mockito.mock(MovieApiEntity::class.java)
 
         // WHEN we get movies from the database, we expect to receive the value stated
-        Mockito.`when`(movieDatabase.getMovies(1)).thenReturn(movieEntity)
+        KMockito.suspendedWhen {movieDatabase.getMovies(1)}.thenReturn(expected)
 
-        // GIVEN movies actually requested from the DB
-        KMockito.suspendedWhen {movieDBRepository.getMovies(1)}.thenReturn(expected)
+        // Given the following results from a real call
+        val actual = runBlocking { movieDBRepository.getMovies(1) }
 
-        // THEN assert that our returned object has a id value at position 0 as per our expected object
-        val result = movieTestObserver.values()[0]
+        if (actual != null){
+            assertSame(expected.results.map { toMovie(it) }, actual) { i1, i2 -> i1.id == i2.id}
+        }
+    }
 
-        assertEquals(movieEntity.results[0].title, result[0].title)
+    private fun toMovie(entity: MovieDetailsApiEntity): Movie {
+
+        entity.id = 528085
+
+        val id = entity.id
+
+        val posterPath = entity.poster_path
+
+        val title = entity.title
+
+        val votingAverage = entity.vote_average
+
+        val releaseDate = entity.release_date
+        val date = formatDate(releaseDate)
+
+        return Movie(id, posterPath, title, votingAverage, date)
 
     }
+
 }
