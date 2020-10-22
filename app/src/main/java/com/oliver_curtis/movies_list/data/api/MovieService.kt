@@ -8,6 +8,6 @@ import retrofit2.http.Query
 
 interface MovieService {
 
-    @GET("/3/movie/popular?api_key=${BuildConfig.API_KEY}&")
+    @GET("/3/movie/popular?api_key=${BuildConfig.API_KEY}")
     fun getMovies(@Query("page") page: Int): Call<MovieApiEntity>
 }
