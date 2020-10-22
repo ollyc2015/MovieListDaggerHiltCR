@@ -72,7 +72,6 @@ class MovieListFragment : Fragment(), MovieView, MovieListView {
     private fun fetchMovies() {
         movieRequestStatus.showProgress()
         getMoviesFromDatabase(PAGE_NUMBER).observe(viewLifecycleOwner, getMoviesObserver)
-        PAGE_NUMBER++
     }
 
     private var getMoviesObserver = object : Observer<CallResult<List<Movie>?>> {
@@ -90,6 +89,9 @@ class MovieListFragment : Fragment(), MovieView, MovieListView {
 
         movieRequestStatus.showSuccess()
         (movieList.adapter as MovieListAdapter).updateAll(movies)
+
+        PAGE_NUMBER++
+        PROCESSING_REQUEST = false
     }
 
     override fun displayError(error: Int) {
@@ -107,11 +109,13 @@ class MovieListFragment : Fragment(), MovieView, MovieListView {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (!recyclerView.canScrollVertically(1)) {
-                    getMoviesFromDatabase(PAGE_NUMBER).observe(
-                        viewLifecycleOwner,
-                        getMoviesObserver
-                    )
-                    PAGE_NUMBER++
+                    if (!PROCESSING_REQUEST) {
+                        PROCESSING_REQUEST = true
+                        getMoviesFromDatabase(PAGE_NUMBER).observe(
+                            viewLifecycleOwner,
+                            getMoviesObserver
+                        )
+                    }
                 }
             }
         })
@@ -128,6 +132,7 @@ class MovieListFragment : Fragment(), MovieView, MovieListView {
     companion object {
 
         var PAGE_NUMBER = 1
+        var PROCESSING_REQUEST = false
 
     }
 }
