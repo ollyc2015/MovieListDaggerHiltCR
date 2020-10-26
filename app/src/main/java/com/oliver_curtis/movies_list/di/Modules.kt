@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder
 import com.oliver_curtis.movies_list.BuildConfig
 import com.oliver_curtis.movies_list.common.retrofit.retrofitInstance
 import com.oliver_curtis.movies_list.data.api.MovieService
-import com.oliver_curtis.movies_list.data.db.MovieDatabase
+import com.oliver_curtis.movies_list.data.source.impl.RemoteMovieDataSource
 import com.oliver_curtis.movies_list.data.repo.MovieDBRepository
 import com.oliver_curtis.movies_list.domain.interactor.MovieUseCase
 import com.oliver_curtis.movies_list.domain.interactor.MovieUseCaseImpl
@@ -44,13 +44,13 @@ class Modules {
 
     @Singleton
     @Provides
-    fun provideMovieDatabase(movieService: MovieService): MovieDatabase {
-        return MovieDatabase(movieService)
+    fun provideMovieDatabase(movieService: MovieService): RemoteMovieDataSource {
+        return RemoteMovieDataSource(movieService)
     }
 
     @Singleton
     @Provides
-    fun provideMovieRepository(movieDatabase: MovieDatabase): MovieRepository {
+    fun provideMovieRepository(movieDatabase: RemoteMovieDataSource): MovieRepository {
         return MovieDBRepository(movieDatabase)
     }
 

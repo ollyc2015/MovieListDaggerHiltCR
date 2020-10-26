@@ -1,7 +1,7 @@
 package com.oliver_curtis.movies_list.data.repo
 
 import com.oliver_curtis.movies_list.common.date.formatDate
-import com.oliver_curtis.movies_list.data.db.MovieDatabase
+import com.oliver_curtis.movies_list.data.source.impl.RemoteMovieDataSource
 import com.oliver_curtis.movies_list.data.entity.MovieApiEntity
 import com.oliver_curtis.movies_list.data.entity.MovieDetailsApiEntity
 import com.oliver_curtis.movies_list.domain.model.Movie
@@ -18,7 +18,7 @@ import org.mockito.MockitoAnnotations
 class MovieDBRepositoryTest {
 
     @Mock
-    lateinit var movieDatabase: MovieDatabase
+    lateinit var movieDatabase: RemoteMovieDataSource
 
     private lateinit var movieDBRepository: MovieDBRepository
 

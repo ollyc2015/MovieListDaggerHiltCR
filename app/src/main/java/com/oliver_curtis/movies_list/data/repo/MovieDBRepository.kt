@@ -1,13 +1,13 @@
 package com.oliver_curtis.movies_list.data.repo
 
 import com.oliver_curtis.movies_list.common.date.formatDate
-import com.oliver_curtis.movies_list.data.db.MovieDatabase
+import com.oliver_curtis.movies_list.data.source.impl.RemoteMovieDataSource
 import com.oliver_curtis.movies_list.data.entity.MovieDetailsApiEntity
 import com.oliver_curtis.movies_list.domain.model.Movie
 import com.oliver_curtis.movies_list.domain.repo.MovieRepository
 
 
-class MovieDBRepository(private val movieDatabase: MovieDatabase) : MovieRepository {
+class MovieDBRepository(private val movieDatabase: RemoteMovieDataSource) : MovieRepository {
 
     private val movieList: MutableList<Movie>? = arrayListOf()
 
